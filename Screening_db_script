@@ -1,0 +1,228 @@
+//-- user role table
+DROP TABLE IF EXISTS `user_roles`;
+CREATE TABLE `user_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(50) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_by` INT(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+TRUNCATE TABLE `user_roles`;
+insert into user_roles(role_name) values('Administrator');
+insert into user_roles(role_name) values('Operator');
+insert into user_roles(role_name) values('Viewer');
+
+//-- user table
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(55) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `username` varchar(50) DEFAULT NULL,
+  `password` varchar(55) DEFAULT NULL,
+  `department` varchar(50) DEFAULT NULL,
+  `designation` varchar(50) DEFAULT NULL,
+  `field_office_id` varchar(50) DEFAULT NULL,
+  `user_role_id` int(11) DEFAULT NULL,
+  `status` int(11) NOT NULL DEFAULT '1' COMMENT '1- pending (its not active), 2-unlock(active), 3-locked',
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_by` INT(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+//-- Countries table
+DROP TABLE IF EXISTS `countries`;
+CREATE TABLE `countries` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `description` varchar(50) DEFAULT NULL,
+  `admin_email` varchar(45) DEFAULT NULL,
+  `timezone` varchar(45) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_by` INT(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+//-- field office table
+DROP TABLE IF EXISTS `field_offices`;
+CREATE TABLE `field_offices` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `acronym` varchar(33) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_by` INT(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+//-- Department table
+DROP TABLE IF EXISTS `departments`;
+CREATE TABLE `departments` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_by` INT(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+//-- Designation table
+DROP TABLE IF EXISTS `designations`;
+CREATE TABLE `designations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_by` INT(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+//-- Employee Info Table
+DROP TABLE IF EXISTS `employee_infos`;
+CREATE TABLE `employee_infos` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `reference_no` VARCHAR(500)CHARACTER SET UTF8 DEFAULT NULL COMMENT 'Generate by system',
+    `employee_id` INT(11) DEFAULT NULL COMMENT 'It will update after the hiring of employee',
+    `employee_name` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+    `father_name` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+    `dob` DATE NULL DEFAULT NULL,
+    `country_of_birth` VARCHAR(50) DEFAULT NULL,
+    `field_office_id` VARCHAR(50) DEFAULT NULL COMMENT 'Country of residence',
+    `address` TEXT NULL DEFAULT NULL,
+    `email` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+    `gender_id` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+    `passport` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+    `nic` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+    `nationality` VARCHAR(50) DEFAULT NULL,
+    `ethnicity` VARCHAR(50) DEFAULT NULL,
+    `created_by` INT(11) DEFAULT NULL,
+    `created_at` DATETIME DEFAULT NULL,
+    `updated_by` INT(11) DEFAULT NULL,
+    `updated_at` DATETIME DEFAULT NULL,
+    `is_deleted` TINYINT(4) DEFAULT '0',
+    PRIMARY KEY (`id`),
+    KEY `IDX_TBL_employee_infos_FLD_id` (`id`),
+    KEY `IDX_TBL_employee_infos_FLD_country_of_birth` (`country_of_birth`),
+    KEY `IDX_TBL_employee_infos_FLD_reference_no` (`reference_no`),
+    KEY `IDX_TBL_employee_infos_FLD_field_office_id` (`field_office_id`),
+    KEY `IDX_TBL_employee_infos_FLD_nationality` (`nationality`)
+)  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
+
+
+//---- Screening details table
+DROP TABLE IF EXISTS `screening_details`;
+CREATE TABLE `screening_details` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `employee_info_id` int(11) NOT NULL,
+  `employee_id` int(11) DEFAULT NULL COMMENT 'It will update after the hiring of employee',
+  `type_of_staff` VARCHAR(50)CHARACTER SET UTF8 DEFAULT NULL,
+  `designation_id` varchar(250) CHARACTER SET utf8 DEFAULT NULL,
+  `department_id` varchar(250) CHARACTER SET utf8 DEFAULT NULL,
+  `line_manager_designation` varchar(250) CHARACTER SET utf8 DEFAULT NULL,
+  `contract_start_date` DATE NULL DEFAULT NULL,
+  `contract_end_date` DATE NULL DEFAULT NULL,
+  `screening_result` varchar(250) CHARACTER SET utf8 DEFAULT NULL,
+  `screening_date` datetime NULL DEFAULT NULL,
+  `comments` TEXT NULL DEFAULT NULL,
+  `questions` varchar(1000) CHARACTER SET utf8 DEFAULT NULL,
+  `screening_status` varchar(100) CHARACTER SET utf8 DEFAULT NULL COMMENT '1-pending, 2-in-progress, 3-completed',
+  `employee_status` VARCHAR(30)CHARACTER SET UTF8 DEFAULT NULL COMMENT '1-active, 2-left',
+  `employee_status_dated` DATE NULL DEFAULT NULL COMMENT 'Employee Leaver Date',
+  `record_status` VARCHAR(30)CHARACTER SET UTF8 DEFAULT NULL COMMENT '1-active, 2-archive',
+  `on_behalf_user` int(11) DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  `updated_by` int(11) DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `is_deleted` tinyint(4) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+//-- Screening Status table
+DROP TABLE IF EXISTS `screening_status`;
+CREATE TABLE `screening_status` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) DEFAULT NULL,
+  `description` varchar(50) DEFAULT NULL,
+  `is_deleted` tinyint(4) NOT NULL DEFAULT '0',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+TRUNCATE TABLE `screening_status`;
+insert into screening_status(name) values('Pending');
+insert into screening_status(name) values('In-progress');
+insert into screening_status(name) values('Completed');
+
+
+
+//-- document checklist table
+DROP TABLE IF EXISTS `screening_document_checklist`;
+CREATE TABLE `screening_document_checklist` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(45) DEFAULT NULL,
+    `description` VARCHAR(50) DEFAULT NULL,
+    `is_deleted` TINYINT(4) NOT NULL DEFAULT '0',
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_at` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
+
+TRUNCATE TABLE `screening_document_checklist`;
+insert into screening_document_checklist(name) values('NIC');
+insert into screening_document_checklist(name) values('Resume');
+insert into screening_document_checklist(name) values('Academic Credentials');
+insert into screening_document_checklist(name) values('Experience Letters');
+insert into screening_document_checklist(name) values('Police Character Certificate');
+insert into screening_document_checklist(name) values('Other');
+
+
+//-- document detail checklist table
+DROP TABLE IF EXISTS `screening_document_detail_checklists`;
+CREATE TABLE `screening_document_detail_checklists` (
+    `id` INT(11) NOT NULL AUTO_INCREMENT,
+    `screening_detail_id` INT(11) DEFAULT NULL,
+    `screening_document_checklist_id` INT(11) DEFAULT NULL,
+    `attachment` varchar(500) CHARACTER SET utf8 DEFAULT NULL,
+    `store_path` TEXT NULL DEFAULT NULL,
+    `expiry_date` DATE DEFAULT NULL,
+    `created_by` INT(11) DEFAULT NULL,
+    `created_at` TIMESTAMP DEFAULT NULL,
+    `updated_by` INT(11) DEFAULT NULL,
+    `updated_at` TIMESTAMP DEFAULT NULL,
+    PRIMARY KEY (`id`)
+)  ENGINE=INNODB DEFAULT CHARSET=LATIN1;
+
+
+DROP TABLE IF EXISTS `screening_status_logs`;
+CREATE TABLE `screening_status_logs` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `screening_detail_id` int(11) DEFAULT NULL,
+  `screening_status_id` int(11) DEFAULT NULL,
+  `description` longtext,
+  `status_date` datetime DEFAULT NULL,
+  `created_by` int(11) DEFAULT NULL,
+  `created_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;

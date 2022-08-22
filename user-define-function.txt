@@ -1,0 +1,11 @@
+-- ################ User function ######################
+DROP FUNCTION IF EXISTS FN_USER;
+DELIMITER $$
+CREATE FUNCTION `FN_USER`(p_user_id int) RETURNS varchar(200) CHARSET latin1
+BEGIN
+
+RETURN (SELECT name FROM users where id = p_user_id
+    and is_deleted = 0 limit 1);
+
+END$$
+DELIMITER ;

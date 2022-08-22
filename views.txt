@@ -1,0 +1,83 @@
+-- ################ Screening_details ######################
+DROP VIEW IF EXISTS  vwscreeningdetails;
+CREATE
+VIEW `vwscreeningdetails` AS
+    SELECT
+        `sd`.`id` AS `screening_detail_id`,
+
+        `sd`.`user_id` AS `user_id`,
+        `sd`.`type_of_staff` AS `type_of_staff`,
+        `sd`.`designation_id` AS `designation_id`,
+        `dg`.`name` AS `designation`,
+        `sd`.`department_id` AS `department_id`,
+        `d`.`name` AS `department`,
+        `ldg`.`name` AS `line_manager_designation`,
+        IFNULL(DATE_FORMAT(`sd`.`contract_start_date`, '%d-%M-%Y'),
+                '') AS `contract_start_date`,
+        IFNULL(DATE_FORMAT(`sd`.`contract_end_date`, '%d-%M-%Y'),
+                'N/A') AS `contract_end_date`,
+        IFNULL(`sd`.`screening_result`, 'N/A') AS `screening_result`,
+        IFNULL(DATE_FORMAT(`sd`.`screening_date`, '%d-%M-%Y'),
+                '') AS `screening_date`,
+        `sd`.`comments` AS `comments`,
+        `sd`.`screening_status` AS `screening_status_id`,
+        CASE
+            WHEN `sd`.`screening_status` = 1 THEN 'Pending'
+            WHEN `sd`.`screening_status` = 2 THEN 'In-progress'
+            WHEN `sd`.`screening_status` = 3 THEN 'Completed'
+            ELSE ''
+        END AS `screening_status`,
+        `sd`.`record_status` AS `record_status`,
+        `sd`.`on_behalf_user` AS `on_behalf_user`,
+        CASE
+			WHEN `sd`.`on_behalf_user` > 0
+			    THEN FN_USER(`sd`.`on_behalf_user`)
+            ELSE 'N/A'
+		END AS `on_behalf_user_name`,
+        DATE_FORMAT(`sd`.`created_at`, '%d-%M-%Y') AS `created_screening_at`,
+        `sd`.`created_by` AS `created_screening_by`,
+        FN_USER(`sd`.`created_by`) AS `created_screening_by_name`,
+        CASE
+            WHEN (`e`.`updated_by` > 0)
+            THEN concat(", and recently updated by ",FN_USER(`e`.`updated_by`)," at ",DATE_FORMAT(`e`.`updated_at`, '%d-%M-%Y'))
+            ELSE ''
+        END as `updation_screening`,
+        `e`.`id` AS `employee_info_id`,
+        `e`.`employee_id` AS `employee_id`,
+        `e`.`reference_no` AS `reference_no`,
+        `e`.`employee_name` AS `employee_name`,
+        `e`.`father_name` AS `father_name`,
+        DATE_FORMAT(`e`.`dob`, '%d-%M-%Y') AS `dob`,
+        `c`.`name` AS `country_of_birth_name`,
+        `e`.`field_office_id` AS `field_office_id`,
+        `f`.`name` AS `field_office_name`,
+        `e`.`address` AS `address`,
+        `e`.`email` AS `email`,
+        `e`.`gender` AS `gender_id`,
+        IFNULL(`e`.`passport`, 'N/A') AS `passport`,
+        IFNULL(`e`.`nic`, 'N/A') AS `nic`,
+        `e`.`nationality` AS `nationality`,
+        `n`.`name` AS `nationality_name`,
+        `e`.`ethnicity` AS `ethnicity`,
+        `ethn`.`name` AS `ethnicity_name`,
+        DATE_FORMAT(`e`.`created_at`, '%d-%M-%Y') AS `created_employee_at`,
+        `e`.`created_by` AS `created_employee_by`,
+        FN_USER(`e`.`created_by`) AS `created_employee_by_name`,
+        CASE
+            WHEN (`e`.`updated_by` > 0)
+            THEN concat(", and recently updated by ",FN_USER(`e`.`updated_by`)," at ",DATE_FORMAT(`e`.`updated_at`, '%d-%M-%Y'))
+            ELSE ''
+        END as `updation_employee`,
+        `e`.`is_deleted`
+    FROM
+        ((((((((`screening_details` `sd`
+        JOIN `employee_infos` `e` ON (`e`.`id` = `sd`.`employee_info_id`))
+        JOIN `field_offices` `f` ON (`f`.`id` = `e`.`field_office_id`))
+        JOIN `countries` `c` ON (`c`.`id` = `e`.`country_of_birth`))
+        JOIN `countries` `n` ON (`n`.`id` = `e`.`nationality`))
+        JOIN `countries` `ethn` ON (`ethn`.`id` = `e`.`ethnicity`))
+        JOIN `departments` `d` ON (`d`.`id` = `sd`.`department_id`))
+        JOIN `designations` `dg` ON (`dg`.`id` = `sd`.`designation_id`))
+        JOIN `designations` `ldg` ON (`ldg`.`id` = `sd`.`line_manager_designation`))
+    WHERE
+        `sd`.`is_deleted` = 0;
